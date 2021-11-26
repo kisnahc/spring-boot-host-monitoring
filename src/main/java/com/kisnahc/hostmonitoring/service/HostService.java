@@ -1,11 +1,14 @@
 package com.kisnahc.hostmonitoring.service;
 
 import com.kisnahc.hostmonitoring.domain.Host;
+import com.kisnahc.hostmonitoring.domain.HostStatus;
 import com.kisnahc.hostmonitoring.repository.HostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
@@ -16,12 +19,12 @@ import java.util.List;
 public class HostService {
 
     private final HostRepository hostRepository;
-
+    private final EntityManager entityManager;
     /**
      * Host 등록 메서드.
      */
     @Transactional
-    public Host saveHost(Host host) throws UnknownHostException {
+    public Host saveHost(Host host) throws IOException {
 
         InetAddress inetAddress = InetAddress.getByName(host.getName());
 
@@ -29,6 +32,19 @@ public class HostService {
                 .name(inetAddress.getHostName())
                 .address(inetAddress.getHostAddress())
                 .build();
+
+//        // 호스트 Alive Check.
+//        //  TODO 데이터베이스에 host_status 넣을지 말지 고민.
+//        if (inetAddress.isReachable(3000)) {
+//            getHost.setStatus(HostStatus.ALIVE);
+//        } else {
+//            getHost.setStatus(HostStatus.DEAD);
+//        }
+
+        // 호스트 등록 100개 제한.
+        if (entityManager.createQuery("select h from Host as h").getResultList().size() == 100) {
+            throw new ArrayIndexOutOfBoundsException("호스트 등록은 100개까지 저장할 수 있습니다.");
+        }
 
         return hostRepository.save(getHost);
     }
@@ -62,6 +78,21 @@ public class HostService {
     @Transactional
     public void deleteHost(Long hostId) {
         hostRepository.deleteById(hostId);
+    }
+
+    /**
+     * Host status 메서드.
+     */
+    public void hostStatus(Long hostId) throws IOException {
+        Host findHost = hostRepository.findById(hostId).get();
+
+        InetAddress inetAddress = InetAddress.getByName(findHost.getName());
+
+        if (inetAddress.isReachable(2000)) {
+            findHost.setStatus(HostStatus.ALIVE);
+        } else {
+            findHost.setStatus(HostStatus.DEAD);
+        }
     }
 
 }

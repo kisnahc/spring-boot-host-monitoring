@@ -27,6 +27,8 @@ public class Host extends BaseTimeEntity{
     @Column(unique = true)
     private String address;
 
+    private HostStatus hostStatus;
+
     @Builder
     public Host(String name, String address) {
         this.name = name;
@@ -37,4 +39,10 @@ public class Host extends BaseTimeEntity{
     public void updateHostName(String hostName) {
         this.name = hostName;
     }
+
+    /* 호스트 상태 변경 메서드 */
+    public void setStatus(HostStatus status) {
+        this.hostStatus = status;
+    }
+
 }
