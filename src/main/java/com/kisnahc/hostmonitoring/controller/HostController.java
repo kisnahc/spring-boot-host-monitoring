@@ -19,9 +19,9 @@ public class HostController {
     private final HostService hostService;
 
     @PostMapping("/host")
-    public HostResponseDto saveHost(@Valid @RequestBody SaveHostRequestDto requestDto) throws IOException {
+    public SaveHostResponseDto saveHost(@Valid @RequestBody SaveHostRequestDto requestDto) throws IOException {
         Host saveHost = hostService.saveHost(requestDto.getHostName());
-        return new HostResponseDto(saveHost);
+        return new SaveHostResponseDto(saveHost);
     }
 
     @GetMapping("/host/{hostId}")
