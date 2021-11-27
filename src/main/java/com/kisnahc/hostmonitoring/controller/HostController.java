@@ -1,10 +1,7 @@
 package com.kisnahc.hostmonitoring.controller;
 
 import com.kisnahc.hostmonitoring.domain.Host;
-import com.kisnahc.hostmonitoring.dto.HostResponseDto;
-import com.kisnahc.hostmonitoring.dto.HostStatusResponseDto;
-import com.kisnahc.hostmonitoring.dto.UpdateHostResponseDto;
-import com.kisnahc.hostmonitoring.dto.UpdateRequestDto;
+import com.kisnahc.hostmonitoring.dto.*;
 import com.kisnahc.hostmonitoring.service.HostService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -23,8 +19,8 @@ public class HostController {
     private final HostService hostService;
 
     @PostMapping("/host")
-    public HostResponseDto saveHost(@Valid @RequestBody Host host) throws IOException {
-        Host saveHost = hostService.saveHost(host);
+    public HostResponseDto saveHost(@Valid @RequestBody SaveHostRequestDto requestDto) throws IOException {
+        Host saveHost = hostService.saveHost(requestDto.getHostName());
         return new HostResponseDto(saveHost);
     }
 
@@ -36,13 +32,7 @@ public class HostController {
 
     @GetMapping("/host")
     public Result findHostList() {
-        List<Host> hostList = hostService.findAllByHost();
-
-        // 엔티티 -> DTO 변환.
-        List<HostResponseDto> collect = hostList.stream()
-                .map(host -> new HostResponseDto(host))
-                .collect(Collectors.toList());
-
+        List<HostResponseDto> collect = hostService.gerHosts();
         return new Result(collect.size(), collect);
     }
 
@@ -73,18 +63,8 @@ public class HostController {
      * Host status 전체 조회.
      */
     @GetMapping("/host/status")
-    public Result hostStatusList() throws IOException {
-        List<Host> hostList = hostService.findAllByHost();
-
-        // TODO 성능 개선.
-        for (Host host : hostList) {
-            hostService.hostStatus(host.getId());
-        }
-
-        List<HostStatusResponseDto> collect = hostList.stream()
-                .map(HostStatusResponseDto::new)
-                .collect(Collectors.toList());
-
+    public Result hostStatusList() {
+        List<HostStatusResponseDto> collect = hostService.getHostsStatus();
         return new Result(collect.size(), collect);
     }
 

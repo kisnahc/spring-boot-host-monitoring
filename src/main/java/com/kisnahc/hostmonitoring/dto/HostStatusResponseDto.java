@@ -25,6 +25,6 @@ public class HostStatusResponseDto {
         this.hostName = host.getName();
         this.hostAddress = host.getAddress();
         // TODO 마지막 활성 시간 구하기.
-//        this.lastAliveDate = host.getLastAliveDate();
+        this.lastAliveDate = host.getLastAliveDate();
     }
 }

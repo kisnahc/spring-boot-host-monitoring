@@ -44,7 +44,7 @@ class HostServiceTest {
         Host host = getHost(inetAddress);
 
         //when
-        Host saveHost = hostService.saveHost(host);
+        Host saveHost = hostService.saveHost(host.getName());
 
         //then
         assertThat(saveHost.getName()).isEqualTo("www.google.com");
@@ -59,7 +59,7 @@ class HostServiceTest {
         Host host = getHost(inetAddress);
 
         //when
-        Host saveHost = hostService.saveHost(host);
+        Host saveHost = hostService.saveHost(host.getName());
         Host findHost = hostRepository.findById(saveHost.getId()).get();
 
         //then
@@ -82,14 +82,14 @@ class HostServiceTest {
         Host host4 = getHost(inetAddress4);
 
         //when
-        hostService.saveHost(host1);
-        hostService.saveHost(host2);
-        hostService.saveHost(host3);
+        hostService.saveHost(host1.getName());
+        hostService.saveHost(host2.getName());
+        hostService.saveHost(host3.getName());
 
         //then
         assertThat(ArrayIndexOutOfBoundsException.class).isEqualTo(ArrayIndexOutOfBoundsException.class);
         ArrayIndexOutOfBoundsException exception = assertThrows(ArrayIndexOutOfBoundsException.class,
-                () -> hostService.saveHost(host4));
+                () -> hostService.saveHost(host4.getName()));
         assertEquals("호스트 등록은 100개까지 저장할 수 있습니다.", exception.getMessage());
     }
 
@@ -102,7 +102,7 @@ class HostServiceTest {
         Host host = getHost(inetAddress);
 
         //when
-        Host saveHost = hostService.saveHost(host);
+        Host saveHost = hostService.saveHost(host.getName());
 
         boolean isAlive = inetAddress.isReachable(2000);
 

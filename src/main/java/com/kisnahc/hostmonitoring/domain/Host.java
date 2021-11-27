@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -29,6 +30,8 @@ public class Host extends BaseTimeEntity{
 
     private HostStatus hostStatus;
 
+    private LocalDateTime lastAliveDate;
+
     @Builder
     public Host(String name, String address) {
         this.name = name;
@@ -44,5 +47,11 @@ public class Host extends BaseTimeEntity{
     public void setStatus(HostStatus status) {
         this.hostStatus = status;
     }
+
+    /* 호스트 마지막 Alive 시간 메서드 */
+    public void setLastAliveDate(LocalDateTime lastAliveDate) {
+        this.lastAliveDate = lastAliveDate;
+    }
+
 
 }

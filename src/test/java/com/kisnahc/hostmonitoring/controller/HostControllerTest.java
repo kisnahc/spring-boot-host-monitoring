@@ -34,7 +34,7 @@ class HostControllerTest {
         Host host = getHost(inetAddress);
 
         //when
-        Host saveHost = hostService.saveHost(host);
+        Host saveHost = hostService.saveHost(host.getName());
 
         //then
         assertThat(saveHost.getName()).isEqualTo("www.google.com");
@@ -49,7 +49,7 @@ class HostControllerTest {
         Host host = getHost(inetAddress);
 
         //when
-        Host saveHost = hostService.saveHost(host);
+        Host saveHost = hostService.saveHost(host.getName());
         Host findHost = hostRepository.findById(saveHost.getId()).get();
 
         //then

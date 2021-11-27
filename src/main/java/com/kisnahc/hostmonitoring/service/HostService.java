@@ -2,8 +2,11 @@ package com.kisnahc.hostmonitoring.service;
 
 import com.kisnahc.hostmonitoring.domain.Host;
 import com.kisnahc.hostmonitoring.domain.HostStatus;
+import com.kisnahc.hostmonitoring.dto.HostResponseDto;
+import com.kisnahc.hostmonitoring.dto.HostStatusResponseDto;
 import com.kisnahc.hostmonitoring.repository.HostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,7 +14,9 @@ import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -19,14 +24,15 @@ import java.util.List;
 public class HostService {
 
     private final HostRepository hostRepository;
+    private final AliveCheckService aliveCheckService;
     private final EntityManager entityManager;
     /**
      * Host 등록 메서드.
      */
     @Transactional
-    public Host saveHost(Host host) throws IOException {
+    public Host saveHost(String hostName) throws IOException {
 
-        InetAddress inetAddress = InetAddress.getByName(host.getName());
+        InetAddress inetAddress = InetAddress.getByName(hostName);
 
         Host getHost = Host.builder()
                 .name(inetAddress.getHostName())
@@ -42,11 +48,19 @@ public class HostService {
 //        }
 
         // 호스트 등록 100개 제한.
+        // TODO 메서드 뽑기.
         if (entityManager.createQuery("select h from Host as h").getResultList().size() == 100) {
             throw new ArrayIndexOutOfBoundsException("호스트 등록은 100개까지 저장할 수 있습니다.");
         }
 
         return hostRepository.save(getHost);
+    }
+
+    /**
+     * HostList 조회 메서드.
+     */
+    public List<Host> findAllByHost() {
+        return hostRepository.findAll();
     }
 
     /**
@@ -57,10 +71,16 @@ public class HostService {
     }
 
     /**
-     * Host 전체 조회 메서드.
+     * Host 전체 조회 후 DTO 변환 메서드.
      */
-    public List<Host> findAllByHost() {
-        return hostRepository.findAll();
+    public List<HostResponseDto> gerHosts() {
+        List<Host> hostList = findAllByHost();
+
+        // 엔티티 -> DTO 변환.
+        List<HostResponseDto> collect = hostList.stream()
+                .map(host -> new HostResponseDto(host))
+                .collect(Collectors.toList());
+        return collect;
     }
 
     /**
@@ -81,18 +101,38 @@ public class HostService {
     }
 
     /**
-     * Host status 메서드.
+     * Host status 단건 조회 메서드.
      */
-    public void hostStatus(Long hostId) throws IOException {
+    public void hostStatus(Long hostId) {
         Host findHost = hostRepository.findById(hostId).get();
 
-        InetAddress inetAddress = InetAddress.getByName(findHost.getName());
+        boolean isAlive = aliveCheckService.isALive(findHost.getName());
 
-        if (inetAddress.isReachable(2000)) {
+        if (isAlive) {
             findHost.setStatus(HostStatus.ALIVE);
+            findHost.setLastAliveDate(LocalDateTime.now());
         } else {
             findHost.setStatus(HostStatus.DEAD);
         }
+    }
+
+    /**
+     * Host status 전체 조회 메서드.
+     */
+    public List<HostStatusResponseDto> getHostsStatus() {
+        List<Host> hostList = findAllByHost();
+
+        // TODO 성능 개선.
+        for (Host host : hostList) {
+            hostStatus(host.getId());
+        }
+
+//        hostService.hostStatus(hostList);
+
+        List<HostStatusResponseDto> collect = hostList.stream()
+                .map(HostStatusResponseDto::new)
+                .collect(Collectors.toList());
+        return collect;
     }
 
 }
