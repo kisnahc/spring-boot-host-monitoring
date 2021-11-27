@@ -6,25 +6,26 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class AliveCheckService {
 
     @Async
-    public boolean isALive(String hostName) {
+    public CompletableFuture<Boolean> isALive(String hostName) {
 
         InetAddress ia = null;
 
         try {
             ia = InetAddress.getByName(hostName);
         } catch (UnknownHostException e) {
-            return false;
+            return CompletableFuture.completedFuture(false);
         }
 
         try {
-            return ia.isReachable(3000);
+            return CompletableFuture.completedFuture(ia.isReachable(3000));
         } catch (IOException e) {
-            return false;
+            return CompletableFuture.completedFuture(false);
         }
 
     }

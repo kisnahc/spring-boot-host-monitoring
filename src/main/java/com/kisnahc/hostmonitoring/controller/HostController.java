@@ -32,7 +32,7 @@ public class HostController {
 
     @GetMapping("/host")
     public Result findHostList() {
-        List<HostResponseDto> collect = hostService.gerHosts();
+        List<HostResponseDto> collect = hostService.getHosts();
         return new Result(collect.size(), collect);
     }
 
@@ -53,10 +53,10 @@ public class HostController {
      * Host status 단건 조회.
      */
     @GetMapping("/host/status/{hostId}")
-    public HostStatusResponseDto hostStatus(@PathVariable Long hostId) throws IOException {
-        hostService.hostStatus(hostId);
-        Host updateStatusHost = hostService.findByHostId(hostId);
-        return new HostStatusResponseDto(updateStatusHost);
+    public HostStatusResponseDto hostStatus(@PathVariable Long hostId) {
+        hostService.findHostStatus(hostId);
+        Host updateHostStatus = hostService.findByHostId(hostId);
+        return new HostStatusResponseDto(updateHostStatus);
     }
 
     /**

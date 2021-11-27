@@ -6,16 +6,14 @@ import com.kisnahc.hostmonitoring.dto.HostResponseDto;
 import com.kisnahc.hostmonitoring.dto.HostStatusResponseDto;
 import com.kisnahc.hostmonitoring.repository.HostRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
@@ -25,7 +23,7 @@ public class HostService {
 
     private final HostRepository hostRepository;
     private final AliveCheckService aliveCheckService;
-    private final EntityManager entityManager;
+
     /**
      * Host 등록 메서드.
      */
@@ -39,18 +37,8 @@ public class HostService {
                 .address(inetAddress.getHostAddress())
                 .build();
 
-//        // 호스트 Alive Check.
-//        //  TODO 데이터베이스에 host_status 넣을지 말지 고민.
-//        if (inetAddress.isReachable(3000)) {
-//            getHost.setStatus(HostStatus.ALIVE);
-//        } else {
-//            getHost.setStatus(HostStatus.DEAD);
-//        }
-
-        // 호스트 등록 100개 제한.
-        // TODO 메서드 뽑기.
-        if (entityManager.createQuery("select h from Host as h").getResultList().size() == 100) {
-            throw new ArrayIndexOutOfBoundsException("호스트 등록은 100개까지 저장할 수 있습니다.");
+        if (hostRepository.findCount() == 100) {
+            throw new RuntimeException("호스트 등록은 100까지 가능합니다.");
         }
 
         return hostRepository.save(getHost);
@@ -73,14 +61,13 @@ public class HostService {
     /**
      * Host 전체 조회 후 DTO 변환 메서드.
      */
-    public List<HostResponseDto> gerHosts() {
+    public List<HostResponseDto> getHosts() {
         List<Host> hostList = findAllByHost();
 
         // 엔티티 -> DTO 변환.
-        List<HostResponseDto> collect = hostList.stream()
+        return hostList.stream()
                 .map(host -> new HostResponseDto(host))
                 .collect(Collectors.toList());
-        return collect;
     }
 
     /**
@@ -103,12 +90,12 @@ public class HostService {
     /**
      * Host status 단건 조회 메서드.
      */
-    public void hostStatus(Long hostId) {
+    public void findHostStatus(Long hostId) {
         Host findHost = hostRepository.findById(hostId).get();
 
-        boolean isAlive = aliveCheckService.isALive(findHost.getName());
+        CompletableFuture<Boolean> isAlive = aliveCheckService.isALive(findHost.getName());
 
-        if (isAlive) {
+        if (isAlive.isCompletedExceptionally()) {
             findHost.setStatus(HostStatus.ALIVE);
             findHost.setLastAliveDate(LocalDateTime.now());
         } else {
@@ -122,17 +109,13 @@ public class HostService {
     public List<HostStatusResponseDto> getHostsStatus() {
         List<Host> hostList = findAllByHost();
 
-        // TODO 성능 개선.
         for (Host host : hostList) {
-            hostStatus(host.getId());
+            findHostStatus(host.getId());
         }
 
-//        hostService.hostStatus(hostList);
-
-        List<HostStatusResponseDto> collect = hostList.stream()
+        return hostList.stream()
                 .map(HostStatusResponseDto::new)
                 .collect(Collectors.toList());
-        return collect;
     }
 
 }
