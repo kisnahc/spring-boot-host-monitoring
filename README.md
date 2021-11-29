@@ -58,11 +58,12 @@
 </li></ul>
 <p>			<img width="544" alt="스크린샷 2021-11-29 오전 11 12 27" src="https://user-images.githubusercontent.com/82119007/143847786-930cec6a-f8de-450e-8639-b9df55368068.png"></p>
 <p>			상태를 조회하고 싶은 호스트를 /host/status/{hostId} 							HTTP GET 메서드로 조회 요청을 하면 해당 컨트롤러가 							실행됩니다.</p>
-<p>			<img width="692" alt="스크린샷 2021-11-29 오전 11 15 58" src="https://user-images.githubusercontent.com/82119007/143847803-f65da71f-c94f-4d08-8677-ed9e2c19539c.png"></p>
+<p>			<img width="552" alt="스크린샷 2021-11-29 오후 8 48 04" src="https://user-images.githubusercontent.com/82119007/143862840-e3242eff-d9fc-4332-a7eb-f12c67828911.png">
+</p>
 <p>			hostService.findHostStatus()가 실행되면 호스트의 상태를 확인하는 				서비스를 담당하는 AliveCheckService의 isAlive()가 실행됩니다. </p>
 <p>			<img width="468" alt="스크린샷 2021-11-29 오후 8 09 08" src="https://user-images.githubusercontent.com/82119007/143857527-b246676f-cdad-42e3-84c7-1a4734a5c3c4.png"></p>
 <p>			상태를 조회하기 위해 InetAddress.isReachable()를 사용했습니다. </p>
-<p>			isReachable.()의 timeout은 임의로 3000ms로 정하여 					사용했습니다. isAlive()는 boolean타입 생성해 반환값은 true 또는 				false를 반환합니다.</p>
+<p>			isReachable.()의 timeout은 임의로 3000ms로 정하여 					사용했습니다. isAlive()는 boolean타입으로 반환값은 true 또는 				false를 반환합니다.</p>
 <p>			<img width="337" alt="스크린샷 2021-11-29 오전 11 31 48" src="https://user-images.githubusercontent.com/82119007/143847824-c74f3ac0-29f0-43d6-bd8c-034c8b82d482.png"></p>
 <p>			Enum타입으로 호스트의 상태를 구분하는 객체를 만들고 isAlive()의 				반환되어 오는 값이 true면 ALIVE, false면 DEAD로 호스트의 상태를 				설정합니다. </p>
 <p>			<img width="479" alt="스크린샷 2021-11-29 오전 11 53 03" src="https://user-images.githubusercontent.com/82119007/143847837-3c64a8e4-73ca-4d98-9eaa-f760cfa3b3b9.png"></p>
