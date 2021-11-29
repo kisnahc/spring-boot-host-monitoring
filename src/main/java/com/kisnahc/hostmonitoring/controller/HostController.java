@@ -18,25 +18,25 @@ public class HostController {
 
     private final HostService hostService;
 
-    @PostMapping("/host")
+    @PostMapping("/hosts")
     public SaveHostResponseDto saveHost(@Valid @RequestBody SaveHostRequestDto requestDto) throws IOException {
         Host saveHost = hostService.saveHost(requestDto.getHostName());
         return new SaveHostResponseDto(saveHost);
     }
 
-    @GetMapping("/host/{hostId}")
+    @GetMapping("/hosts/{id}")
     public HostResponseDto findHost(@PathVariable Long hostId) {
         Host findHost = hostService.findByHostId(hostId);
         return new HostResponseDto(findHost);
     }
 
-    @GetMapping("/host")
+    @GetMapping("/hosts")
     public Result findHostList() {
         List<HostResponseDto> collect = hostService.getHosts();
         return new Result(collect.size(), collect);
     }
 
-    @PutMapping("/host/{hostId}")
+    @PutMapping("/hosts/{hostId}")
     public UpdateHostResponseDto updateHost(@PathVariable Long hostId,
                                             @Valid @RequestBody UpdateRequestDto requestDto) {
         hostService.updateHost(hostId, requestDto.getHostName());
@@ -44,7 +44,7 @@ public class HostController {
         return new UpdateHostResponseDto(updateHost);
     }
 
-    @DeleteMapping("/host/{hostId}")
+    @DeleteMapping("/hosts/{hostId}")
     public void deleteHost(@PathVariable Long hostId) {
         hostService.deleteHost(hostId);
     }
@@ -52,7 +52,7 @@ public class HostController {
     /**
      * Host status 단건 조회.
      */
-    @GetMapping("/host/status/{hostId}")
+    @GetMapping("/hosts/status/{hostId}")
     public HostStatusResponseDto hostStatus(@PathVariable Long hostId) {
         hostService.findHostStatus(hostId);
         Host updateHostStatus = hostService.findByHostId(hostId);
@@ -62,7 +62,7 @@ public class HostController {
     /**
      * Host status 전체 조회.
      */
-    @GetMapping("/host/status")
+    @GetMapping("/hosts/status")
     public Result hostStatusList() {
         List<HostStatusResponseDto> collect = hostService.getHostsStatus();
         return new Result(collect.size(), collect);

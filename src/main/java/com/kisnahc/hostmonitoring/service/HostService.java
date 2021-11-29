@@ -98,7 +98,6 @@ public class HostService {
 
         boolean isAlive = aliveCheckService.isAlive(findHost.getName());
 
-
         if (isAlive) {
             findHost.setStatus(HostStatus.ALIVE);
 
