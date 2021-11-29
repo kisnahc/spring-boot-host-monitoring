@@ -24,7 +24,7 @@ public class HostController {
         return new SaveHostResponseDto(saveHost);
     }
 
-    @GetMapping("/hosts/{id}")
+    @GetMapping("/hosts/{hostId}")
     public HostResponseDto findHost(@PathVariable Long hostId) {
         Host findHost = hostService.findByHostId(hostId);
         return new HostResponseDto(findHost);
@@ -45,8 +45,9 @@ public class HostController {
     }
 
     @DeleteMapping("/hosts/{hostId}")
-    public void deleteHost(@PathVariable Long hostId) {
+    public DeleteHostResponseDto deleteHost(@PathVariable Long hostId) {
         hostService.deleteHost(hostId);
+        return new DeleteHostResponseDto(hostId);
     }
 
     /**
