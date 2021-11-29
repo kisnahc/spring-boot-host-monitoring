@@ -3,9 +3,10 @@
 <p>		<h2>1. 호스트 등록 관리 REST API. </h2></p>
 <ul><li>			호스트 등록.
 </li></ul>
-<p>			<img width="851" alt="스크린샷 2021-11-27 오후 5 40 59" src="https://user-images.githubusercontent.com/82119007/143830384-3b107779-2ee0-4e76-8805-ef4161355324.png">
+<p>			<img width="861" alt="스크린샷 2021-11-29 오후 11 27 52" src="https://user-images.githubusercontent.com/82119007/143885903-580a6700-b748-4f09-a256-7060dee34b02.png">
+
 </p>
-<p>			/host HTTP POST 메서드로 요청을 하면 해당 컨트롤러가 호출되고,</p>
+<p>			/hosts HTTP POST 메서드로 요청을 하면 해당 컨트롤러가 호출되고,</p>
 <p>			호스트 등록(저장) 하기 위해 HostService.saveHost()가 실행됩니다.</p>
 <p>			<img width="519" alt="스크린샷 2021-11-27 오후 5 06 02" src="https://user-images.githubusercontent.com/82119007/143839529-681ec2cf-9a5e-4ba9-9ab3-4ffeb418e017.png"></p>
 <p>			<img width="460" alt="스크린샷 2021-11-27 오후 5 11 00" src="https://user-images.githubusercontent.com/82119007/143839534-118688c3-d882-4053-8ba8-e9ab95ae7935.png"> 를 이용해  DNS서버에서 </p>
@@ -25,8 +26,8 @@
 <p>			</p>
 <ul><li>			호스트 조회.
 </li></ul>
-<p>			<img width="484" alt="스크린샷 2021-11-29 오전 9 57 10" src="https://user-images.githubusercontent.com/82119007/143840810-69bec688-7e99-4b31-b7b7-ae8a009ee545.png"></p>
-<p>			/host/{hostId} HTTP GET 메서드로 요청을 하면  해당 컨트롤러가 호				출됩니다.  호스트 등록시 PK로  host_id를 사용하고 조회 하고자 하는  				호스트의 id를 @PathVariable로 JPA에서 제공하는  findById() 					사용해서 조회 후 반환 합니다.</p>
+<p>			<img width="483" alt="스크린샷 2021-11-29 오후 11 28 09" src="https://user-images.githubusercontent.com/82119007/143885908-b7a41e77-bb09-4042-9477-e160fff10b51.png">
+<p>			/hosts/{hostId} HTTP GET 메서드로 요청을 하면  해당 컨트롤러가 호				출됩니다.  호스트 등록시 PK로  host_id를 사용하고 조회 하고자 하는  				호스트의 id를 @PathVariable로 JPA에서 제공하는  findById() 					사용해서 조회 후 반환 합니다.</p>
 <p>			<img width="390" alt="스크린샷 2021-11-29 오전 10 03 37" src="https://user-images.githubusercontent.com/82119007/143840817-0bd69f96-fafc-447c-8aae-fc7e745f6f93.png">  </p>
 <p>			조회 결과 필드에는 등록/수정 시간을 포함하기 위해  해당 기능을 					담당하는 BaseTimeEntity객체를 생성하고 JPA Auditing기능을 					사용했습니다.  </p>
 <p>			JPA Auditing을 사용하기 위해서 Application클래스에 </p>
@@ -38,8 +39,8 @@
 
 <ul><li>			호스트 수정.
 </li></ul>
-<p>			<img width="714" alt="스크린샷 2021-11-29 오전 10 27 47" src="https://user-images.githubusercontent.com/82119007/143841694-5bde580a-cd22-4619-b002-d71309c4daec.png"></p>
-<p>			/host/{hostId} HTTP PUT 메서드로 요청을 하면 해당 컨트롤러가 				호출됩니다. 조회와 같이 호스트의 id로 수정이 필요한 호스트를 </p>
+<p>			<img width="723" alt="스크린샷 2021-11-29 오후 11 28 31" src="https://user-images.githubusercontent.com/82119007/143886891-0778a7ab-548e-48ac-9e91-c667add47c6a.png">
+<p>			/hosts/{hostId} HTTP PUT 메서드로 요청을 하면 해당 컨트롤러가 				호출됩니다. 조회와 같이 호스트의 id로 수정이 필요한 호스트를 </p>
 <p>			조회합니다. </p>
 <p>			</p>
 <p>			<img width="461" alt="스크린샷 2021-11-29 오전 10 40 41" src="https://user-images.githubusercontent.com/82119007/143841702-fd7be5ee-8f88-4dd1-bad2-1f91e0d12f12.png"></p>
@@ -48,16 +49,17 @@
 
 <ul><li>			호스트 삭제.
 </li></ul>
-<p>			<img width="419" alt="스크린샷 2021-11-29 오전 10 49 50" src="https://user-images.githubusercontent.com/82119007/143841718-946b2389-7457-44d2-85d7-9c999cf1d58f.png">
+<p>			<img width="546" alt="스크린샷 2021-11-29 오후 11 43 36" src="https://user-images.githubusercontent.com/82119007/143888314-13feef4b-9126-4c3b-b4a3-2e9f25229455.png">
+
 </p>
-<p>			/host/{hostId} HTTP DELETE 메서드를 호출하면 해당 컨트롤러가 				실행되고, delete는 별다른 반환 값 없이 진행했습니다.</p>
+<p>			/hosts/{hostId} HTTP DELETE 메서드를 호출하면 해당 컨트롤러가 				실행되고, deleteHostId 값을 응답합니다.</p>
 
 
 <p>	<h2> 2. Alive 상태 조회 REST API.</h2> </p>
 <ul><li>			호스트 상태 단건 조회.
 </li></ul>
-<p>			<img width="544" alt="스크린샷 2021-11-29 오전 11 12 27" src="https://user-images.githubusercontent.com/82119007/143847786-930cec6a-f8de-450e-8639-b9df55368068.png"></p>
-<p>			상태를 조회하고 싶은 호스트를 /host/status/{hostId} 							HTTP GET 메서드로 조회 요청을 하면 해당 컨트롤러가 							실행됩니다.</p>
+<p>			<img width="543" alt="스크린샷 2021-11-29 오후 11 29 01" src="https://user-images.githubusercontent.com/82119007/143887156-3d221078-65d8-429a-9b24-3df6d938d33f.png">
+<p>			상태를 조회하고 싶은 호스트를 /hosts/status/{hostId} 							HTTP GET 메서드로 조회 요청을 하면 해당 컨트롤러가 							실행됩니다.</p>
 <p>			<img width="552" alt="스크린샷 2021-11-29 오후 8 48 04" src="https://user-images.githubusercontent.com/82119007/143862840-e3242eff-d9fc-4332-a7eb-f12c67828911.png">
 </p>
 <p>			hostService.findHostStatus()가 실행되면 호스트의 상태를 확인하는 				서비스를 담당하는 AliveCheckService의 isAlive()가 실행됩니다. </p>
@@ -73,8 +75,8 @@
 
 <ul><li>			호스트 상태 전체 조회.
 </li></ul>
-<p>			<img width="570" alt="스크린샷 2021-11-29 오후 12 30 13" src="https://user-images.githubusercontent.com/82119007/143851620-28da880c-7a8d-449f-9fc2-85581b9cbcb9.png"></p>
-<p>			<i>/host/status HTTP GET 메서드로 호스트 상태 전체 조회 컨트롤러가 				실행됩니다.</p>
+<p>			<img width="565" alt="스크린샷 2021-11-29 오후 11 29 16" src="https://user-images.githubusercontent.com/82119007/143887176-7a6442f8-6a0b-42a3-adb7-88319330549b.png">
+<p>			<i>/hosts/status HTTP GET 메서드로 호스트 상태 전체 조회 컨트롤러가 				실행됩니다.</p>
 <p>			<img width="431" alt="스크린샷 2021-11-29 오후 12 31 31" src="https://user-images.githubusercontent.com/82119007/143851657-a618ff8d-935f-4dc1-b3ea-4ea40f591925.png"></p>
 <p>			<img width="289" alt="스크린샷 2021-11-29 오후 12 32 50" src="https://user-images.githubusercontent.com/82119007/143851665-5a1c8da9-c84e-4e76-b7dc-95b2be357114.png">
 </p>
