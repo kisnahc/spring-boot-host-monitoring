@@ -6,6 +6,7 @@ import com.kisnahc.hostmonitoring.dto.HostResponseDto;
 import com.kisnahc.hostmonitoring.dto.HostStatusResponseDto;
 import com.kisnahc.hostmonitoring.repository.HostRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,9 +14,10 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
@@ -90,14 +92,23 @@ public class HostService {
     /**
      * Host status 단건 조회 메서드.
      */
+    @Transactional
     public void findHostStatus(Long hostId) {
         Host findHost = hostRepository.findById(hostId).get();
 
-        CompletableFuture<Boolean> isAlive = aliveCheckService.isALive(findHost.getName());
+        boolean isAlive = aliveCheckService.isAlive(findHost.getName());
 
-        if (isAlive.isCompletedExceptionally()) {
+
+        if (isAlive) {
             findHost.setStatus(HostStatus.ALIVE);
-            findHost.setLastAliveDate(LocalDateTime.now());
+
+            // 마지막 Alive 시간.
+            if (findHost.getHostStatus() == HostStatus.ALIVE && findHost.getLastAliveDate() == null) {
+                findHost.setLastAliveDate(LocalDateTime.now());
+            } else {
+                findHost.setLastAliveDate(findHost.getLastAliveDate());
+            }
+
         } else {
             findHost.setStatus(HostStatus.DEAD);
         }
@@ -109,9 +120,10 @@ public class HostService {
     public List<HostStatusResponseDto> getHostsStatus() {
         List<Host> hostList = findAllByHost();
 
-        for (Host host : hostList) {
-            findHostStatus(host.getId());
-        }
+        hostList.stream()
+                .parallel()
+                .map(Host::getHostStatus)
+                .collect(Collectors.toList());
 
         return hostList.stream()
                 .map(HostStatusResponseDto::new)

@@ -1,32 +1,25 @@
 package com.kisnahc.hostmonitoring.service;
 
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 public class AliveCheckService {
 
-    @Async
-    public CompletableFuture<Boolean> isALive(String hostName) {
+    public boolean isAlive(String hostName) {
 
-        InetAddress ia = null;
-
-        try {
-            ia = InetAddress.getByName(hostName);
-        } catch (UnknownHostException e) {
-            return CompletableFuture.completedFuture(false);
-        }
+        InetAddress inetAddress = null;
 
         try {
-            return CompletableFuture.completedFuture(ia.isReachable(3000));
+            inetAddress = InetAddress.getByName(hostName);
+            inetAddress.isReachable(3000);
         } catch (IOException e) {
-            return CompletableFuture.completedFuture(false);
+            e.printStackTrace();
+            return false;
         }
-
+        return false;
     }
+
 }
