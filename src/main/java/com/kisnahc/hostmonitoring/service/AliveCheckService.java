@@ -19,7 +19,7 @@ public class AliveCheckService {
             e.printStackTrace();
             return false;
         }
-        return false;
+        return true;
     }
 
 }
